@@ -12,7 +12,7 @@
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
-        
+
         body {
             background: var(--tg-theme-bg-color, #f5f7fa);
             color: var(--tg-theme-text-color, #2c3e50);
@@ -20,8 +20,8 @@
             padding: 0;
             margin: 0;
         }
-        
-        /* Градиентный фон */
+
+        /* Шапка с градиентом */
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px 20px 40px 20px;
@@ -32,7 +32,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .gradient-bg::before {
             content: '';
             position: absolute;
@@ -43,13 +43,12 @@
             background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
             animation: rotate 20s linear infinite;
         }
-        
+
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        
-        /* Шапка */
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -58,14 +57,14 @@
             position: relative;
             z-index: 2;
         }
-        
+
         .logo {
             font-size: 24px;
             font-weight: 700;
             letter-spacing: -0.5px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        
+
         .user-badge {
             background: rgba(255,255,255,0.2);
             padding: 8px 16px;
@@ -74,15 +73,21 @@
             font-weight: 500;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        
-        /* Карточка баланса */
+
+        .user-badge:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
         .balance-container {
             position: relative;
             z-index: 2;
+            cursor: pointer;
         }
-        
+
         .balance-label {
             font-size: 14px;
             opacity: 0.9;
@@ -90,7 +95,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
+
         .balance-amount {
             font-size: 48px;
             font-weight: 700;
@@ -98,65 +103,53 @@
             margin-bottom: 10px;
             text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        
+
         .balance-currency {
             font-size: 24px;
             opacity: 0.8;
             margin-left: 5px;
         }
-        
+
+        /* Меню навигации */
+        .nav-menu {
+            display: flex;
+            gap: 10px;
+            margin: 20px 20px 0 20px;
+            padding: 5px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 10;
+            margin-top: -20px;
+        }
+
+        .nav-item {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #95a5a6;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-item:hover:not(.active) {
+            background: #f0f0f0;
+        }
+
         /* Контент */
         .content {
             padding: 20px;
-            margin-top: -20px;
-            position: relative;
-            z-index: 3;
         }
-        
-        /* Статистика */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.03);
-            cursor: pointer;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
-        }
-        
-        .stat-card:active {
-            transform: translateY(0);
-        }
-        
-        .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 14px;
-            color: #95a5a6;
-            font-weight: 500;
-        }
-        
+
         /* Админ-панель */
         .admin-panel {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -166,18 +159,13 @@
             color: white;
             box-shadow: 0 10px 25px rgba(243, 104, 224, 0.3);
             display: none;
-        }
-        
-        .admin-panel.visible {
-            display: block;
             animation: slideDown 0.3s ease;
         }
-        
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .admin-panel.visible {
+            display: block;
         }
-        
+
         .admin-title {
             font-size: 18px;
             font-weight: 600;
@@ -186,13 +174,13 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         .admin-buttons {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
-        
+
         .admin-btn {
             background: rgba(255,255,255,0.2);
             border: 1px solid rgba(255,255,255,0.3);
@@ -209,69 +197,101 @@
             justify-content: center;
             gap: 5px;
         }
-        
+
         .admin-btn:hover {
             background: rgba(255,255,255,0.3);
             transform: translateY(-2px);
         }
-        
-        .admin-btn:active {
-            transform: translateY(0);
+
+        /* Статистика */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
         }
-        
-        /* Табы */
-        .tabs {
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #95a5a6;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        /* Табы заданий */
+        .tasks-tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
-            background: white;
-            padding: 5px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-        
-        .tab {
+
+        .task-tab {
             flex: 1;
             padding: 12px;
             text-align: center;
-            cursor: pointer;
-            border-radius: 12px;
+            border-radius: 15px;
             font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s;
-            color: #95a5a6;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
         }
-        
-        .tab.active {
+
+        .task-tab.active {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
-        
+
         /* Список заданий */
         .tasks-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-bottom: 20px;
             max-height: 400px;
             overflow-y: auto;
             padding-right: 5px;
         }
-        
+
         .tasks-list::-webkit-scrollbar {
             width: 5px;
         }
-        
+
         .tasks-list::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 10px;
         }
-        
+
         .tasks-list::-webkit-scrollbar-thumb {
             background: linear-gradient(135deg, #667eea, #764ba2);
             border-radius: 10px;
         }
-        
+
         /* Карточка задания */
         .task-item {
             background: white;
@@ -285,22 +305,17 @@
             transition: all 0.3s;
             animation: fadeIn 0.3s ease;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
+
         .task-item:hover {
             transform: translateX(5px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
         }
-        
+
         .task-item.completed {
             opacity: 0.8;
             background: #f8f9fa;
         }
-        
+
         .task-icon {
             width: 50px;
             height: 50px;
@@ -311,24 +326,24 @@
             justify-content: center;
             font-size: 24px;
         }
-        
+
         .task-info {
             flex: 1;
         }
-        
+
         .task-title {
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 4px;
             color: #2c3e50;
         }
-        
+
         .task-desc {
             font-size: 13px;
             color: #95a5a6;
             margin-bottom: 6px;
         }
-        
+
         .task-reward {
             font-size: 14px;
             font-weight: 600;
@@ -337,12 +352,7 @@
             align-items: center;
             gap: 3px;
         }
-        
-        .task-reward::before {
-            content: '💰';
-            font-size: 12px;
-        }
-        
+
         .task-action {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -353,36 +363,82 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
-            min-width: 90px;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            min-width: 100px;
         }
-        
+
         .task-action:hover:not(:disabled) {
             transform: scale(1.05);
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
-        
-        .task-action:active:not(:disabled) {
-            transform: scale(0.95);
-        }
-        
+
         .task-action.completed {
             background: #27ae60;
-            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
         }
-        
+
         .task-action:disabled {
             opacity: 0.7;
             cursor: not-allowed;
         }
-        
-        /* Кнопка обновления */
-        .refresh-wrapper {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
+
+        /* Карточки информации */
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
-        
+
+        .info-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .info-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .info-text {
+            color: #95a5a6;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .help-section {
+            text-align: left;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .help-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            gap: 10px;
+        }
+
+        .help-item:last-child {
+            border-bottom: none;
+        }
+
+        .help-command {
+            font-weight: 700;
+            color: #667eea;
+            min-width: 80px;
+        }
+
+        .help-desc {
+            color: #7f8c8d;
+        }
+
+        /* Кнопка обновления */
         .refresh-btn {
             background: white;
             border: 2px solid #667eea;
@@ -395,32 +451,19 @@
             transition: all 0.3s;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            width: 100%;
+            margin: 20px 0;
         }
-        
+
         .refresh-btn:hover {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border-color: transparent;
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
-        
-        .refresh-btn:active {
-            transform: translateY(0);
-        }
-        
-        .refresh-btn svg {
-            width: 20px;
-            height: 20px;
-            transition: transform 0.5s;
-        }
-        
-        .refresh-btn:hover svg {
-            transform: rotate(180deg);
-        }
-        
+
         /* Уведомления */
         .toast {
             position: fixed;
@@ -436,57 +479,37 @@
             z-index: 1000;
             display: none;
             animation: slideUp 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        
-        .toast.success {
-            background: #27ae60;
-        }
-        
-        .toast.error {
-            background: #e74c3c;
-        }
-        
-        .toast.info {
-            background: #3498db;
-        }
-        
+
+        .toast.success { background: #27ae60; }
+        .toast.error { background: #e74c3c; }
+        .toast.info { background: #3498db; }
+
         @keyframes slideUp {
             from { transform: translateY(100px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
-        
-        /* Пустое состояние */
+
+        /* Пустые состояния */
         .empty-state {
             text-align: center;
             padding: 40px 20px;
             color: #95a5a6;
         }
-        
+
         .empty-state-icon {
             font-size: 48px;
             margin-bottom: 15px;
             opacity: 0.5;
         }
-        
-        .empty-state-text {
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 10px;
-        }
-        
-        .empty-state-hint {
-            font-size: 14px;
-            opacity: 0.7;
-        }
-        
+
         /* Загрузка */
         .loading {
             text-align: center;
             padding: 40px;
             color: #95a5a6;
         }
-        
+
         .spinner {
             width: 50px;
             height: 50px;
@@ -496,32 +519,36 @@
             animation: spin 1s linear infinite;
             margin: 20px auto;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        /* Футер */
+
         .footer {
             text-align: center;
             margin-top: 30px;
-            padding: 20px 0;
+            padding: 20px;
             color: #95a5a6;
             font-size: 12px;
             border-top: 1px solid #ecf0f1;
         }
+
+        /* Скрытые секции */
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <!-- Градиентный фон -->
+    <!-- Шапка -->
     <div class="gradient-bg">
         <div class="header">
             <div class="logo">✨ Task Bot</div>
-            <div class="user-badge" id="username">Загрузка...</div>
+            <div class="user-badge" id="username" onclick="showSection('profile')">Загрузка...</div>
         </div>
         
-        <div class="balance-container">
+        <div class="balance-container" onclick="showSection('balance')">
             <div class="balance-label">Ваш баланс</div>
             <div class="balance-amount">
                 <span id="balance">0</span>
@@ -529,74 +556,159 @@
             </div>
         </div>
     </div>
-    
-    <!-- Основной контент -->
+
+    <!-- Навигационное меню -->
+    <div class="nav-menu">
+        <div class="nav-item active" onclick="showSection('tasks')">📋 Задания</div>
+        <div class="nav-item" onclick="showSection('stats')">📊 Статистика</div>
+        <div class="nav-item" onclick="showSection('help')">❓ Помощь</div>
+        <div class="nav-item" onclick="showSection('profile')">👤 Профиль</div>
+    </div>
+
+    <!-- Контент -->
     <div class="content">
-        <!-- Статистика -->
-        <div class="stats-grid">
-            <div class="stat-card" onclick="switchTab('available')">
-                <div class="stat-value" id="availableCount">0</div>
-                <div class="stat-label">Доступно</div>
-            </div>
-            <div class="stat-card" onclick="switchTab('completed')">
-                <div class="stat-value" id="completedCount">0</div>
-                <div class="stat-label">Выполнено</div>
-            </div>
-        </div>
-        
-        <!-- Админ-панель (скрыта для обычных пользователей) -->
+        <!-- Админ-панель (видна только админам) -->
         <div class="admin-panel" id="adminPanel">
             <div class="admin-title">
                 <span>👑</span>
                 <span>Панель администратора</span>
             </div>
             <div class="admin-buttons">
-                <button class="admin-btn" onclick="adminAction('clear')">
-                    <span>🔄</span> Очистить
-                </button>
-                <button class="admin-btn" onclick="adminAction('reset')">
-                    <span>💰</span> Сброс монет
-                </button>
-                <button class="admin-btn" onclick="adminAction('add1000')">
-                    <span>➕</span> +1000
-                </button>
-                <button class="admin-btn" onclick="adminAction('stats')">
-                    <span>📊</span> Статистика
-                </button>
+                <button class="admin-btn" onclick="adminAction('clear')">🔄 Очистить задания</button>
+                <button class="admin-btn" onclick="adminAction('reset')">💰 Сбросить монеты</button>
+                <button class="admin-btn" onclick="adminAction('add1000')">➕ +1000 монет</button>
+                <button class="admin-btn" onclick="adminAction('stats')">📊 Статистика бота</button>
+                <button class="admin-btn" onclick="adminAction('showtasks')">📋 Все задания</button>
+                <button class="admin-btn" onclick="adminAction('activetasks')">✅ Активные</button>
+                <button class="admin-btn" onclick="adminAction('inactivetasks')">❌ Неактивные</button>
+                <button class="admin-btn" onclick="adminAction('makeadmin')">👑 Назначить админа</button>
             </div>
         </div>
-        
-        <!-- Табы -->
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('available')">📋 Доступные</div>
-            <div class="tab" onclick="switchTab('completed')">✅ Выполненные</div>
-        </div>
-        
-        <!-- Список заданий -->
-        <div class="tasks-list" id="tasksList">
-            <div class="loading">
-                <div class="spinner"></div>
-                <div>Загрузка заданий...</div>
+
+        <!-- Секция: Задания -->
+        <div id="tasks-section">
+            <div class="tasks-tabs">
+                <div class="task-tab active" onclick="switchTaskTab('available')">📋 Доступные</div>
+                <div class="task-tab" onclick="switchTaskTab('completed')">✅ Выполненные</div>
+            </div>
+            
+            <div class="tasks-list" id="tasksList">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <div>Загрузка заданий...</div>
+                </div>
             </div>
         </div>
-        
+
+        <!-- Секция: Статистика -->
+        <div id="stats-section" class="hidden">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="statBalance">0</div>
+                    <div class="stat-label">Монет</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statCompleted">0</div>
+                    <div class="stat-label">Выполнено</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statAvailable">0</div>
+                    <div class="stat-label">Доступно</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statTotal">0</div>
+                    <div class="stat-label">Всего</div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card" onclick="adminAction('stats')">
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Пользователей</div>
+                </div>
+                <div class="stat-card" onclick="adminAction('stats')">
+                    <div class="stat-value" id="totalTasks">0</div>
+                    <div class="stat-label">Заданий</div>
+                </div>
+                <div class="stat-card" onclick="adminAction('stats')">
+                    <div class="stat-value" id="totalCompleted">0</div>
+                    <div class="stat-label">Выполнено всего</div>
+                </div>
+                <div class="stat-card" onclick="adminAction('stats')">
+                    <div class="stat-value" id="totalCoins">0</div>
+                    <div class="stat-label">Монет всего</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция: Помощь -->
+        <div id="help-section" class="hidden">
+            <div class="info-card">
+                <div class="info-icon">❓</div>
+                <div class="info-title">Помощь по боту</div>
+                <div class="info-text">
+                    Здесь ты можешь узнать все команды и возможности бота
+                </div>
+                
+                <div class="help-section">
+                    <div class="help-item">
+                        <span class="help-command">/start</span>
+                        <span class="help-desc">Начать работу с ботом</span>
+                    </div>
+                    <div class="help-item">
+                        <span class="help-command">/balance</span>
+                        <span class="help-desc">Показать баланс</span>
+                    </div>
+                    <div class="help-item">
+                        <span class="help-command">/myid</span>
+                        <span class="help-desc">Узнать свой Telegram ID</span>
+                    </div>
+                </div>
+
+                <div class="help-section">
+                    <div class="help-item">
+                        <span class="help-command">/adminhelp</span>
+                        <span class="help-desc">Команды администратора</span>
+                    </div>
+                    <div class="help-item">
+                        <span class="help-command">/adminstats</span>
+                        <span class="help-desc">Статистика бота</span>
+                    </div>
+                    <div class="help-item">
+                        <span class="help-command">/adminclear</span>
+                        <span class="help-desc">Очистить задания</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция: Профиль -->
+        <div id="profile-section" class="hidden">
+            <div class="info-card">
+                <div class="info-icon">👤</div>
+                <div class="info-title" id="profileName">Пользователь</div>
+                <div class="info-text">
+                    <div style="margin: 10px 0;">🆔 ID: <span id="profileId">...</span></div>
+                    <div style="margin: 10px 0;">🔗 Username: <span id="profileUsername">...</span></div>
+                    <div style="margin: 10px 0;">📅 Регистрация: <span id="profileDate">...</span></div>
+                    <div style="margin: 10px 0;">💰 Монет: <span id="profileCoins">0</span></div>
+                    <div style="margin: 10px 0;">✅ Выполнено: <span id="profileTasks">0</span></div>
+                    <div style="margin: 10px 0;">👑 Админ: <span id="profileAdmin">Нет</span></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Кнопка обновления -->
-        <div class="refresh-wrapper">
-            <button class="refresh-btn" onclick="refreshData()">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C15.3019 3 18.1885 4.77814 19.7545 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M17 7H20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                Обновить
-            </button>
-        </div>
+        <button class="refresh-btn" onclick="refreshData()">
+            🔄 Обновить все данные
+        </button>
     </div>
-    
+
     <!-- Футер -->
     <div class="footer">
-        @MyMoney124_bot · Реальное время
+        @MyMoney124_bot · Все функции в одном окне
     </div>
-    
+
     <!-- Уведомления -->
     <div class="toast" id="toast"></div>
 
@@ -605,64 +717,133 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
-        tg.enableClosingConfirmation();
         
         // Данные пользователя
         const user = tg.initDataUnsafe?.user;
         let isAdmin = false;
-        let currentTab = 'available';
-        
-        // Состояние приложения
-        const state = {
+        let currentTaskTab = 'available';
+        let userData = {
+            id: user?.id,
+            username: user?.username,
+            firstName: user?.first_name,
+            lastName: user?.last_name,
             balance: 0,
             tasks: [],
-            isLoading: false
+            joinedDate: new Date().toLocaleDateString()
         };
-        
+
+        // Глобальная статистика
+        let globalStats = {
+            totalUsers: 0,
+            totalTasks: 0,
+            totalCompleted: 0,
+            totalCoins: 0
+        };
+
         // Элементы DOM
         const usernameEl = document.getElementById('username');
         const balanceEl = document.getElementById('balance');
-        const availableCountEl = document.getElementById('availableCount');
-        const completedCountEl = document.getElementById('completedCount');
         const tasksListEl = document.getElementById('tasksList');
         const adminPanelEl = document.getElementById('adminPanel');
         const toastEl = document.getElementById('toast');
-        
+
+        // Статистика
+        const statBalance = document.getElementById('statBalance');
+        const statCompleted = document.getElementById('statCompleted');
+        const statAvailable = document.getElementById('statAvailable');
+        const statTotal = document.getElementById('statTotal');
+        const totalUsers = document.getElementById('totalUsers');
+        const totalTasks = document.getElementById('totalTasks');
+        const totalCompleted = document.getElementById('totalCompleted');
+        const totalCoins = document.getElementById('totalCoins');
+
+        // Профиль
+        const profileName = document.getElementById('profileName');
+        const profileId = document.getElementById('profileId');
+        const profileUsername = document.getElementById('profileUsername');
+        const profileDate = document.getElementById('profileDate');
+        const profileCoins = document.getElementById('profileCoins');
+        const profileTasks = document.getElementById('profileTasks');
+        const profileAdmin = document.getElementById('profileAdmin');
+
         // Отображение имени пользователя
         if (user) {
             usernameEl.textContent = user.username ? `@${user.username}` : user.firstName || 'Пользователь';
+            profileId.textContent = user.id;
+            profileUsername.textContent = user.username ? `@${user.username}` : 'нет';
+            profileName.textContent = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Пользователь';
         }
-        
-        // Функции для работы с данными
-        function loadUserData() {
-            sendToBot({
-                action: 'get_user_data',
-                user_id: user?.id
+
+        // Переключение секций
+        function showSection(section) {
+            // Обновляем активный пункт меню
+            document.querySelectorAll('.nav-item').forEach((item, index) => {
+                item.classList.remove('active');
+                if ((section === 'tasks' && index === 0) ||
+                    (section === 'stats' && index === 1) ||
+                    (section === 'help' && index === 2) ||
+                    (section === 'profile' && index === 3)) {
+                    item.classList.add('active');
+                }
             });
+
+            // Показываем нужную секцию
+            document.getElementById('tasks-section').classList.add('hidden');
+            document.getElementById('stats-section').classList.add('hidden');
+            document.getElementById('help-section').classList.add('hidden');
+            document.getElementById('profile-section').classList.add('hidden');
+            
+            document.getElementById(`${section}-section`).classList.remove('hidden');
+
+            // Загружаем данные для секции
+            if (section === 'stats') {
+                updateStats();
+            } else if (section === 'profile') {
+                updateProfile();
+            }
         }
-        
-        function loadTasks() {
-            sendToBot({
-                action: 'get_tasks',
-                user_id: user?.id
-            });
+
+        // Переключение табов заданий
+        function switchTaskTab(tab) {
+            currentTaskTab = tab;
+            document.querySelectorAll('.task-tab').forEach(t => t.classList.remove('active'));
+            if (tab === 'available') {
+                document.querySelectorAll('.task-tab')[0].classList.add('active');
+            } else {
+                document.querySelectorAll('.task-tab')[1].classList.add('active');
+            }
+            renderTasks();
         }
-        
-        function syncData() {
-            sendToBot({
-                action: 'sync',
-                user_id: user?.id
-            });
+
+        // Загрузка данных
+        function loadAllData() {
+            sendToBot({ action: 'get_user_data', user_id: user?.id });
+            sendToBot({ action: 'get_tasks', user_id: user?.id });
+            if (isAdmin) {
+                sendToBot({ action: 'admin_stats', user_id: user?.id });
+            }
         }
-        
+
+        // Обновление данных
+        function refreshData() {
+            showToast('🔄 Обновление данных...', 'info');
+            loadAllData();
+        }
+
+        // Синхронизация каждые 10 секунд
+        setInterval(() => {
+            sendToBot({ action: 'sync', user_id: user?.id });
+        }, 10000);
+
+        // Отправка данных боту
         function sendToBot(data) {
             tg.sendData(JSON.stringify(data));
         }
-        
-        // Отправка запроса на выполнение задания
+
+        // Выполнение задания
         function completeTask(taskId, reward) {
-            const taskCard = event.target.closest('.task-item');
             const button = event.target;
+            const originalText = button.textContent;
             
             button.disabled = true;
             button.textContent = '⏳';
@@ -674,82 +855,51 @@
                 reward: reward
             });
         }
-        
+
         // Админ-действия
         function adminAction(action) {
-            sendToBot({
-                action: `admin_${action}`,
-                user_id: user?.id
-            });
+            sendToBot({ action: `admin_${action}`, user_id: user?.id });
             
-            showToast('⏳ Выполняется...', 'info');
-        }
-        
-        // Переключение табов
-        function switchTab(tab) {
-            currentTab = tab;
+            const messages = {
+                'clear': '🔄 Очистка заданий...',
+                'reset': '💰 Сброс монет...',
+                'add1000': '➕ Добавление монет...',
+                'stats': '📊 Запрос статистики...',
+                'showtasks': '📋 Загрузка заданий...',
+                'activetasks': '✅ Загрузка активных...',
+                'inactivetasks': '❌ Загрузка неактивных...',
+                'makeadmin': '👑 Назначение админа...'
+            };
             
-            // Обновляем активный таб
-            document.querySelectorAll('.tab').forEach(t => {
-                if (t.textContent.toLowerCase().includes(tab === 'available' ? 'доступные' : 'выполненные')) {
-                    t.classList.add('active');
-                } else {
-                    t.classList.remove('active');
-                }
-            });
-            
-            renderTasks();
+            showToast(messages[action] || '⏳ Выполняется...', 'info');
         }
-        
-        // Обновление данных
-        function refreshData() {
-            showToast('🔄 Обновление...', 'info');
-            loadUserData();
-            loadTasks();
-        }
-        
-        // Автоматическое обновление каждые 10 секунд
-        setInterval(syncData, 10000);
-        
+
         // Отрисовка заданий
         function renderTasks() {
-            if (!state.tasks || state.tasks.length === 0) {
+            if (!userData.tasks || userData.tasks.length === 0) {
                 tasksListEl.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📭</div>
-                        <div class="empty-state-text">Нет заданий</div>
-                        <div class="empty-state-hint">Задания появятся позже</div>
+                        <div>Нет заданий</div>
                     </div>
                 `;
                 return;
             }
-            
-            // Фильтруем задания по текущему табу
-            const filteredTasks = state.tasks.filter(task => 
-                currentTab === 'available' ? !task.completed : task.completed
+
+            const filteredTasks = userData.tasks.filter(task => 
+                currentTaskTab === 'available' ? !task.completed : task.completed
             );
-            
+
             if (filteredTasks.length === 0) {
                 tasksListEl.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">✨</div>
-                        <div class="empty-state-text">
-                            ${currentTab === 'available' ? 'Нет доступных заданий' : 'Нет выполненных заданий'}
-                        </div>
-                        <div class="empty-state-hint">
-                            ${currentTab === 'available' ? 'Загляните позже' : 'Выполните задания'}
-                        </div>
+                        <div>${currentTaskTab === 'available' ? 'Нет доступных заданий' : 'Нет выполненных заданий'}</div>
                     </div>
                 `;
                 return;
             }
-            
-            // Сортируем: невыполненные сверху
-            filteredTasks.sort((a, b) => {
-                if (a.completed === b.completed) return 0;
-                return a.completed ? 1 : -1;
-            });
-            
+
             let html = '';
             filteredTasks.forEach(task => {
                 html += `
@@ -758,7 +908,7 @@
                         <div class="task-info">
                             <div class="task-title">${escapeHtml(task.title)}</div>
                             <div class="task-desc">${escapeHtml(task.description)}</div>
-                            <div class="task-reward">+${task.reward}</div>
+                            <div class="task-reward">💰 +${task.reward}</div>
                         </div>
                         <button class="task-action ${task.completed ? 'completed' : ''}" 
                                 ${task.completed ? 'disabled' : ''}
@@ -768,19 +918,34 @@
                     </div>
                 `;
             });
-            
+
             tasksListEl.innerHTML = html;
         }
-        
+
         // Обновление статистики
         function updateStats() {
-            const completed = state.tasks?.filter(t => t.completed).length || 0;
-            const available = state.tasks?.filter(t => !t.completed).length || 0;
+            const completed = userData.tasks?.filter(t => t.completed).length || 0;
+            const available = userData.tasks?.filter(t => !t.completed).length || 0;
             
-            completedCountEl.textContent = completed;
-            availableCountEl.textContent = available;
+            statBalance.textContent = userData.balance;
+            statCompleted.textContent = completed;
+            statAvailable.textContent = available;
+            statTotal.textContent = completed + available;
+            
+            totalUsers.textContent = globalStats.totalUsers;
+            totalTasks.textContent = globalStats.totalTasks;
+            totalCompleted.textContent = globalStats.totalCompleted;
+            totalCoins.textContent = globalStats.totalCoins;
         }
-        
+
+        // Обновление профиля
+        function updateProfile() {
+            profileCoins.textContent = userData.balance;
+            profileTasks.textContent = userData.tasks?.filter(t => t.completed).length || 0;
+            profileAdmin.textContent = isAdmin ? 'Да' : 'Нет';
+            profileDate.textContent = userData.joinedDate || new Date().toLocaleDateString();
+        }
+
         // Показ уведомления
         function showToast(message, type = 'success') {
             toastEl.textContent = message;
@@ -791,26 +956,29 @@
                 toastEl.style.display = 'none';
             }, 2000);
         }
-        
+
         // Защита от XSS
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
-        
+
         // Обработка ответов от бота
         tg.onEvent('message', function(event) {
             try {
                 const data = JSON.parse(event.data);
                 console.log('Получены данные:', data);
-                
+
                 // Обновление баланса
                 if (data.balance !== undefined) {
-                    state.balance = data.balance;
+                    userData.balance = data.balance;
                     balanceEl.textContent = data.balance;
+                    if (!document.getElementById('stats-section').classList.contains('hidden')) {
+                        updateStats();
+                    }
                 }
-                
+
                 // Обновление статуса админа
                 if (data.isAdmin !== undefined) {
                     isAdmin = data.isAdmin;
@@ -819,69 +987,48 @@
                     } else {
                         adminPanelEl.classList.remove('visible');
                     }
+                    if (!document.getElementById('profile-section').classList.contains('hidden')) {
+                        updateProfile();
+                    }
                 }
-                
+
                 // Обновление заданий
                 if (data.tasks) {
-                    state.tasks = data.tasks;
+                    userData.tasks = data.tasks;
                     renderTasks();
-                    updateStats();
+                    if (!document.getElementById('stats-section').classList.contains('hidden')) {
+                        updateStats();
+                    }
                 }
-                
-                // Обработка выполнения задания
+
+                // Обновление после выполнения задания
                 if (data.success !== undefined && data.taskId) {
                     if (data.success) {
-                        // Обновляем состояние задания
-                        const task = state.tasks.find(t => t.id === data.taskId);
+                        const task = userData.tasks.find(t => t.id === data.taskId);
                         if (task) {
                             task.completed = true;
                         }
-                        
-                        // Обновляем баланс
-                        if (data.newBalance !== undefined) {
-                            state.balance = data.newBalance;
-                            balanceEl.textContent = data.newBalance;
-                        }
-                        
+                        userData.balance = data.newBalance || userData.balance;
+                        balanceEl.textContent = userData.balance;
                         renderTasks();
-                        updateStats();
+                        if (!document.getElementById('stats-section').classList.contains('hidden')) {
+                            updateStats();
+                        }
                         showToast(data.message || '✅ Задание выполнено!', 'success');
                     } else {
                         showToast(data.message || '❌ Ошибка', 'error');
-                        
-                        // Возвращаем кнопку в исходное состояние
-                        const buttons = document.querySelectorAll('.task-action');
-                        buttons.forEach(btn => {
-                            if (btn.textContent === '⏳') {
-                                btn.disabled = false;
-                                btn.textContent = 'Выполнить';
-                            }
-                        });
                     }
                 }
-                
-                // Админ-статистика
+
+                // Глобальная статистика
                 if (data.totalUsers !== undefined) {
-                    showToast(
-                        `👥 ${data.totalUsers} · 📋 ${data.totalTasks} · 💰 ${data.totalCoins}`,
-                        'info'
-                    );
-                }
-                
-            } catch (e) {
-                console.error('Ошибка парсинга:', e);
-            }
-        });
-        
-        // Обработка ошибок
-        window.onerror = function(msg, url, line) {
-            console.error('Ошибка:', msg, line);
-            showToast('⚠️ Произошла ошибка', 'error');
-        };
-        
-        // Загружаем данные при старте
-        loadUserData();
-        loadTasks();
-    </script>
-</body>
-</html>
+                    globalStats = {
+                        totalUsers: data.totalUsers,
+                        totalTasks: data.totalTasks,
+                        totalCompleted: data.totalCompleted,
+                        totalCoins: data.totalCoins
+                    };
+                    if (!document.getElementById('stats-section').classList.contains('hidden')) {
+                        updateStats();
+                    }
+                    showToast(`👥 ${data.totalUsers} · 📋 ${data.totalTasks} · 💰 ${data.totalCoins}`,
