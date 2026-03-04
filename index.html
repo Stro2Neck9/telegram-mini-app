@@ -1,362 +1,457 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Bot</title>
+    <title>Task Bot - Информация</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f7fa;
+        * {
             margin: 0;
-            padding: 16px;
-            color: #2c3e50;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
         
+        body {
+            background: var(--tg-theme-bg-color, #f5f7fa);
+            color: var(--tg-theme-text-color, #2c3e50);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+        
+        /* Шапка */
         .header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 20px;
             color: white;
-            padding: 20px;
-            border-radius: 20px;
             text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
             margin-bottom: 20px;
-            box-shadow: 0 10px 20px rgba(102,126,234,0.2);
         }
         
-        .balance {
-            font-size: 48px;
-            font-weight: bold;
-            margin: 10px 0;
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
         }
         
+        .username {
+            font-size: 14px;
+            opacity: 0.9;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Навигация */
         .nav {
             display: flex;
             gap: 10px;
+            padding: 0 20px;
             margin-bottom: 20px;
-            background: white;
-            padding: 5px;
-            border-radius: 30px;
         }
         
         .nav-item {
             flex: 1;
-            padding: 12px;
+            padding: 15px 10px;
+            background: white;
+            border-radius: 20px;
             text-align: center;
-            border-radius: 25px;
-            cursor: pointer;
             font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            color: #95a5a6;
         }
         
         .nav-item.active {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
         
-        .tasks-section {
+        .nav-item:hover:not(.active) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        /* Контент */
+        .content {
+            padding: 0 20px 20px;
+        }
+        
+        /* Карточка раздела */
+        .section-card {
             background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            animation: fadeIn 0.3s ease;
         }
         
-        .task-item {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Раздел команд */
+        .commands-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .command-item {
             background: #f8f9fa;
             border-radius: 15px;
             padding: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .command-name {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .command-desc {
+            color: #7f8c8d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Раздел обновлений */
+        .updates-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .update-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+        }
+        
+        .update-date {
+            font-size: 14px;
+            color: #95a5a6;
             margin-bottom: 10px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 5px;
         }
         
-        .task-item.completed {
-            opacity: 0.7;
-            background: #f1f3f5;
+        .update-date span {
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 12px;
         }
         
-        .task-button {
+        .update-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .update-changes {
+            list-style: none;
+        }
+        
+        .update-changes li {
+            padding: 5px 0 5px 20px;
+            position: relative;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .update-changes li:before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 5px;
+        }
+        
+        .update-changes li.new:before {
+            content: "✨";
+            color: #e74c3c;
+        }
+        
+        .update-changes li.fixed:before {
+            content: "🔧";
+            color: #27ae60;
+        }
+        
+        /* Раздел поддержки */
+        .support-card {
+            text-align: center;
+        }
+        
+        .support-text {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .support-button {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        
-        .task-button.completed {
-            background: #4caf50;
-        }
-        
-        .task-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .stat-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 15px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-        
-        .refresh-btn {
-            width: 100%;
-            padding: 15px;
-            background: white;
-            border: 2px solid #667eea;
-            color: #667eea;
             border-radius: 30px;
-            font-size: 16px;
+            padding: 18px 40px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
-            margin-bottom: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            margin-top: 20px;
         }
         
-        .refresh-btn:hover {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+        .support-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
         }
         
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: #2c3e50;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
+        .support-button:active {
+            transform: translateY(0);
+        }
+        
+        .support-note {
+            margin-top: 20px;
+            color: #95a5a6;
+            font-size: 12px;
+        }
+        
+        /* Скрытые секции */
+        .hidden {
             display: none;
         }
         
-        .toast.success { background: #27ae60; }
-        .toast.error { background: #e74c3c; }
-        
-        .hidden { display: none; }
-        .loading { text-align: center; padding: 40px; color: #999; }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+        /* Футер */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #95a5a6;
+            font-size: 12px;
+            border-top: 1px solid #ecf0f1;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
+    <!-- Шапка -->
     <div class="header">
-        <div>Task Bot</div>
-        <div class="balance" id="balance">0</div>
-        <div id="username">Загрузка...</div>
+        <div class="logo">🤖 Task Bot</div>
+        <div class="username" id="username">Загрузка...</div>
     </div>
-
+    
+    <!-- Навигация -->
     <div class="nav">
-        <div class="nav-item active" onclick="switchTab('tasks')">📋 Задания</div>
-        <div class="nav-item" onclick="switchTab('stats')">📊 Статистика</div>
+        <div class="nav-item active" onclick="showSection('commands')">📋 Команды</div>
+        <div class="nav-item" onclick="showSection('updates')">🔄 Обновления</div>
+        <div class="nav-item" onclick="showSection('support')">💖 Поддержка</div>
     </div>
-
-    <div id="tasksSection">
-        <div class="tasks-section">
-            <div style="font-weight:600; margin-bottom:15px;">📋 Доступные задания</div>
-            <div id="tasksList" class="tasks-list">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    Загрузка заданий...
+    
+    <!-- Контент -->
+    <div class="content">
+        <!-- Раздел команд -->
+        <div id="commands-section" class="section-card">
+            <div class="section-icon">📋</div>
+            <div class="section-title">Команды бота</div>
+            
+            <div class="commands-list">
+                <div class="command-item">
+                    <div class="command-name">/start</div>
+                    <div class="command-desc">Начать работу с ботом, получить приветственное сообщение</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">/balance</div>
+                    <div class="command-desc">Показать текущий баланс монет</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">/myid</div>
+                    <div class="command-desc">Узнать свой Telegram ID</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">/tasks</div>
+                    <div class="command-desc">Показать список доступных заданий</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">/stats</div>
+                    <div class="command-desc">Показать статистику выполнения заданий</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">/help</div>
+                    <div class="command-desc">Показать справочную информацию</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">/adminhelp</div>
+                    <div class="command-desc">Команды для администраторов (если есть права)</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Раздел обновлений (скрыт) -->
+        <div id="updates-section" class="section-card hidden">
+            <div class="section-icon">🔄</div>
+            <div class="section-title">Последние обновления</div>
+            
+            <div class="updates-list">
+                <div class="update-item">
+                    <div class="update-date">
+                        <span>🔥 Новое</span>
+                        04 марта 2025
+                    </div>
+                    <div class="update-title">✨ Версия 2.0.0 - Большое обновление</div>
+                    <ul class="update-changes">
+                        <li class="new">✨ Добавлено информационное окно с тремя разделами</li>
+                        <li class="new">📋 Раздел "Команды" со всеми командами бота</li>
+                        <li class="new">🔄 Раздел "Обновления" с историей изменений</li>
+                        <li class="new">💖 Раздел "Поддержка" для связи с автором</li>
+                        <li class="new">🎨 Полностью обновлен дизайн интерфейса</li>
+                    </ul>
+                </div>
+                
+                <div class="update-item">
+                    <div class="update-date">
+                        <span>⚡️ Улучшено</span>
+                        03 марта 2025
+                    </div>
+                    <div class="update-title">⚡️ Версия 1.5.0 - Улучшения</div>
+                    <ul class="update-changes">
+                        <li class="fixed">🔧 Исправлена синхронизация баланса</li>
+                        <li class="new">✨ Добавлена анимация при переключении разделов</li>
+                        <li>📱 Улучшена адаптация под темную тему</li>
+                    </ul>
+                </div>
+                
+                <div class="update-item">
+                    <div class="update-date">
+                        <span>🚀 Запуск</span>
+                        01 марта 2025
+                    </div>
+                    <div class="update-title">🚀 Версия 1.0.0 - Первый релиз</div>
+                    <ul class="update-changes">
+                        <li>🎉 Запуск бота с базовым функционалом</li>
+                        <li>📋 Система заданий и монет</li>
+                        <li>👑 Админ-панель для управления</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Раздел поддержки (скрыт) -->
+        <div id="support-section" class="section-card hidden">
+            <div class="section-icon">💖</div>
+            <div class="section-title">Поддержка автора</div>
+            
+            <div class="support-card">
+                <div class="support-text">
+                    Если вам нравится бот и вы хотите поддержать разработку,<br>
+                    вы можете отправить донат автору.
+                </div>
+                
+                <button class="support-button" onclick="supportAuthor()">
+                    💖 Поддержать автора
+                </button>
+                
+                <div class="support-note">
+                    Ссылка появится здесь в ближайшее время
+                </div>
+                
+                <div style="margin-top: 30px; color: #7f8c8d;">
+                    По всем вопросам: @admin_username
                 </div>
             </div>
         </div>
     </div>
-
-    <div id="statsSection" class="hidden">
-        <div class="tasks-section">
-            <div style="font-weight:600; margin-bottom:15px;">📊 Твоя статистика</div>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="statBalance">0</div>
-                    <div>Монет</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="statCompleted">0</div>
-                    <div>Выполнено</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="statAvailable">0</div>
-                    <div>Доступно</div>
-                </div>
-            </div>
-        </div>
+    
+    <!-- Футер -->
+    <div class="footer">
+        @MyMoney124_bot · Информационное окно v2.0
     </div>
-
-    <button class="refresh-btn" onclick="refreshData()">🔄 Обновить</button>
-
-    <div class="toast" id="toast"></div>
 
     <script>
-        // Инициализация
+        // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
-
-        const user = tg.initDataUnsafe?.user;
-        let userData = { balance: 0, tasks: [] };
-        let currentTab = 'tasks';
-
-        if (user) {
-            document.getElementById('username').textContent = user.username ? `@${user.username}` : (user.first_name || 'Пользователь');
-        }
-
-        // Отправка данных боту
-        function sendToBot(action, data = {}) {
-            const payload = { action, user_id: user?.id, ...data };
-            console.log('📤 Отправка:', payload);
-            tg.sendData(JSON.stringify(payload));
-        }
-
-        // Загрузка данных
-        function loadUserData() { sendToBot('get_user_data'); }
-        function loadTasks() { sendToBot('get_tasks'); }
         
-        function refreshData() {
-            showToast('🔄 Обновление...');
-            loadUserData();
-            loadTasks();
+        // Данные пользователя
+        const user = tg.initDataUnsafe?.user;
+        
+        // Отображение имени пользователя
+        if (user) {
+            const usernameEl = document.getElementById('username');
+            usernameEl.textContent = user.username ? `@${user.username}` : (user.first_name || 'Пользователь');
         }
-
-        // Переключение табов
-        function switchTab(tab) {
-            currentTab = tab;
-            document.querySelectorAll('.nav-item').forEach((el, i) => {
-                el.classList.toggle('active', (tab === 'tasks' && i === 0) || (tab === 'stats' && i === 1));
+        
+        // Переключение разделов
+        function showSection(section) {
+            // Обновляем активную кнопку
+            document.querySelectorAll('.nav-item').forEach((item, index) => {
+                item.classList.remove('active');
+                if ((section === 'commands' && index === 0) ||
+                    (section === 'updates' && index === 1) ||
+                    (section === 'support' && index === 2)) {
+                    item.classList.add('active');
+                }
             });
-            document.getElementById('tasksSection').classList.toggle('hidden', tab !== 'tasks');
-            document.getElementById('statsSection').classList.toggle('hidden', tab !== 'stats');
-            if (tab === 'stats') updateStats();
+            
+            // Показываем нужный раздел
+            document.getElementById('commands-section').classList.add('hidden');
+            document.getElementById('updates-section').classList.add('hidden');
+            document.getElementById('support-section').classList.add('hidden');
+            
+            document.getElementById(`${section}-section`).classList.remove('hidden');
         }
-
-        // Выполнение задания
-        function completeTask(taskId) {
-            const button = event.target;
-            button.disabled = true;
-            button.textContent = '⏳';
-            sendToBot('complete_task', { task_id: taskId });
+        
+        // Функция поддержки (пока заглушка)
+        function supportAuthor() {
+            tg.showAlert('💖 Ссылка для поддержки появится в ближайшее время. Спасибо за интерес к боту!');
         }
-
-        // Отображение заданий
-        function renderTasks() {
-            const list = document.getElementById('tasksList');
-            if (!userData.tasks?.length) {
-                list.innerHTML = '<div class="loading">📭 Нет заданий</div>';
-                return;
-            }
-
-            list.innerHTML = userData.tasks.map(task => `
-                <div class="task-item ${task.completed ? 'completed' : ''}">
-                    <div>
-                        <strong>${escapeHtml(task.title)}</strong><br>
-                        <span style="color:#27ae60;">💰 +${task.reward}</span>
-                    </div>
-                    <button class="task-button ${task.completed ? 'completed' : ''}" 
-                            ${task.completed ? 'disabled' : ''}
-                            onclick="completeTask(${task.id})">
-                        ${task.completed ? '✓ Готово' : 'Выполнить'}
-                    </button>
-                </div>
-            `).join('');
+        
+        // Открыть ссылку (будет использоваться позже)
+        function openLink(url) {
+            tg.openLink(url);
         }
-
-        // Обновление статистики
-        function updateStats() {
-            const completed = userData.tasks?.filter(t => t.completed).length || 0;
-            const available = userData.tasks?.filter(t => !t.completed).length || 0;
-            document.getElementById('statBalance').textContent = userData.balance;
-            document.getElementById('statCompleted').textContent = completed;
-            document.getElementById('statAvailable').textContent = available;
-        }
-
-        // Уведомления
-        function showToast(text, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = text;
-            toast.className = `toast ${type}`;
-            toast.style.display = 'block';
-            setTimeout(() => toast.style.display = 'none', 2000);
-        }
-
-        // Защита от XSS
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Обработка ответов от бота
-        tg.onEvent('message', function(event) {
-            try {
-                console.log('📥 Получено:', event);
-                const data = JSON.parse(event);
-                
-                if (data.balance !== undefined) {
-                    userData.balance = data.balance;
-                    document.getElementById('balance').textContent = data.balance;
-                }
-                
-                if (data.tasks) {
-                    userData.tasks = data.tasks;
-                    renderTasks();
-                    updateStats();
-                }
-                
-                if (data.success !== undefined && data.taskId) {
-                    if (data.success) {
-                        showToast('✅ Задание выполнено!');
-                        loadUserData();
-                        loadTasks();
-                    } else {
-                        showToast('❌ Задание уже выполнено', 'error');
-                        const buttons = document.querySelectorAll('.task-button');
-                        buttons.forEach(btn => {
-                            if (btn.textContent === '⏳') {
-                                btn.disabled = false;
-                                btn.textContent = 'Выполнить';
-                            }
-                        });
-                    }
-                }
-                
-                if (data.status === 'connected') {
-                    console.log('✅ Связь работает');
-                    showToast('✅ Связь установлена');
-                }
-            } catch (e) {}
-        });
-
-        // Тестовое соединение при загрузке
-        setTimeout(() => {
-            sendToBot('test_connection');
-            refreshData();
-        }, 1000);
-
-        // Автосинхронизация каждые 10 секунд
-        setInterval(() => sendToBot('sync'), 10000);
+        
+        console.log('✅ Информационное окно загружено');
     </script>
 </body>
 </html>
