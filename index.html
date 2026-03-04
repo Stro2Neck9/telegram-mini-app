@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Tasks</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background: var(--tg-theme-bg-color, #f8f9fa);
+            color: var(--tg-theme-text-color, #1a1a1a);
+            min-height: 100vh;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        
+        /* Шапка с градиентом */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: -16px -16px 20px -16px;
+            padding: 30px 20px 40px 20px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            color: white;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .user-info {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        /* Карточка баланса */
+        .balance-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin: -20px 0 25px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .balance-label {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .balance-value {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Админ-панель (скрыта по умолчанию) */
+        .admin-panel {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: white;
+            display: none;
+        }
+        
+        .admin-panel.visible {
+            display: block;
+        }
+        
+        .admin-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .admin-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .admin-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            backdrop-filter: blur(5px);
+            transition: all 0.2s;
+        }
+        
+        .admin-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Статистика */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #999;
+        }
+        
+        /* Табы */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        /* Задания */
+        .tasks-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .task-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.2s;
+            border-left: 4px solid #667eea;
+        }
+        
+        .task-card.completed {
+            border-left-color: #4caf50;
+            opacity: 0.8;
+        }
+        
+        .task-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .task-content {
+            flex: 1;
+        }
+        
+        .task-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .task-description {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+        
+        .task-reward {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4caf50;
+        }
+        
+        .task-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 100px;
+        }
+        
+        .task-button.completed {
+            background: #4caf50;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .task-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Кнопка обновления */
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 20px 0;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        
+        .refresh-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+        
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Загрузка */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Сообщения */
+        .message {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            z-index: 1000;
+            display: none;
+            animation: slideUp 0.3s;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Футер */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 12px;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-top">
+            <div class="header-title">📋 Task Bot</div>
+            <div class="user-info" id="username">Загрузка...</div>
+        </div>
+    </div>
+    
+    <div class="balance-card" onclick="refreshData()">
+        <span class="balance-label">💰 Баланс</span>
+        <span class="balance-value" id="balance">0</span>
+    </div>
+    
+    <!-- Админ-панель (видна только админам) -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-title">👑 Админ-панель</div>
+        <div class="admin-buttons">
+            <button class="admin-btn" onclick="adminAction('clear')">🔄 Очистить задания</button>
+            <button class="admin-btn" onclick="adminAction('reset')">💰 Сбросить монеты</button>
+            <button class="admin-btn" onclick="adminAction('add1000')">➕ +1000 монет</button>
+            <button class="admin-btn" onclick="adminAction('stats')">📊 Статистика</button>
+        </div>
+    </div>
+    
+    <!-- Статистика (видна всем) -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card" onclick="showTasks()">
+            <div class="stat-value" id="availableTasks">0</div>
+            <div class="stat-label">Доступно</div>
+        </div>
+        <div class="stat-card" onclick="showCompleted()">
+            <div class="stat-value" id="completedTasks">0</div>
+            <div class="stat-label">Выполнено</div>
+        </div>
+    </div>
+    
+    <!-- Табы -->
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('tasks')">📋 Задания</div>
+        <div class="tab" onclick="switchTab('completed')">✅ Выполненные</div>
+    </div>
+    
+    <!-- Контейнер для заданий -->
+    <div class="tasks-container" id="tasksContainer">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            Загрузка заданий...
+        </div>
+    </div>
+    
+    <!-- Кнопка обновления -->
+    <button class="refresh-btn" onclick="refreshData()">🔄 Обновить данные</button>
+    
+    <!-- Сообщение -->
+    <div class="message" id="message"></div>
+    
+    <div class="footer">
+        Работает внутри Telegram | Реальное время
+    </div>
+
+    <script>
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        
+        // Глобальные переменные
+        const user = tg.initDataUnsafe?.user;
+        let isAdmin = false;
+        let userData = {
+            userId: user?.id,
+            username: user?.username || 'user',
+            balance: 0,
+            allTasks: [],
+            currentTab: 'tasks'
+        };
+        
+        // Отображаем информацию о пользователе
+        if (user) {
+            document.getElementById('username').textContent = '@' + (user.username || 'пользователь');
+        }
+        
+        // Загрузка всех данных
+        async function loadAllData() {
+            showLoading(true);
+            
+            // Загружаем данные пользователя
+            tg.sendData(JSON.stringify({
+                action: 'get_user_data',
+                user_id: user?.id
+            }));
+            
+            // Загружаем задания
+            tg.sendData(JSON.stringify({
+                action: 'get_tasks',
+                user_id: user?.id
+            }));
+        }
+        
+        // Обновление данных (ручное)
+        function refreshData() {
+            showMessage('🔄 Обновление данных...', '#667eea');
+            loadAllData();
+        }
+        
+        // Автоматическое обновление каждые 10 секунд
+        setInterval(() => {
+            tg.sendData(JSON.stringify({
+                action: 'sync',
+                user_id: user?.id
+            }));
+        }, 10000);
+        
+        // Отображение заданий
+        function renderTasks() {
+            const container = document.getElementById('tasksContainer');
+            const showCompleted = userData.currentTab === 'completed';
+            
+            if (!userData.allTasks || userData.allTasks.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px;">📭 Нет заданий</div>';
+                return;
+            }
+            
+            // Фильтруем задания по табу
+            const filteredTasks = userData.allTasks.filter(task => 
+                showCompleted ? task.completed : !task.completed
+            );
+            
+            if (filteredTasks.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 40px;">${showCompleted ? '✅ Нет выполненных заданий' : '📋 Нет доступных заданий'}</div>`;
+                return;
+            }
+            
+            let html = '';
+            filteredTasks.forEach(task => {
+                html += `
+                    <div class="task-card ${task.completed ? 'completed' : ''}">
+                        <div class="task-icon">${task.icon || '📌'}</div>
+                        <div class="task-content">
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-description">${task.description}</div>
+                            <div class="task-reward">💰 +${task.reward}</div>
+                        </div>
+                        <button class="task-button ${task.completed ? 'completed' : ''}" 
+                                ${task.completed ? 'disabled' : ''}
+                                onclick="completeTask(${task.id}, ${task.reward})">
+                            ${task.completed ? '✓ Выполнено' : 'Выполнить'}
+                        </button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            showLoading(false);
+        }
+        
+        // Выполнение задания
+        function completeTask(taskId, reward) {
+            const button = event.target;
+            const originalText = button.textContent;
+            
+            button.disabled = true;
+            button.textContent = '⏳ Выполняется...';
+            
+            // Отправляем запрос боту
+            tg.sendData(JSON.stringify({
+                action: 'complete_task',
+                task_id: taskId,
+                user_id: user?.id,
+                reward: reward
+            }));
+        }
+        
+        // Админ-действия
+        function adminAction(action) {
+            tg.sendData(JSON.stringify({
+                action: 'admin_' + action,
+                user_id: user?.id
+            }));
+            
+            const messages = {
+                'clear': '🔄 Очистка заданий...',
+                'reset': '💰 Сброс монет...',
+                'add1000': '➕ Добавление монет...',
+                'stats': '📊 Запрос статистики...'
+            };
+            
+            showMessage(messages[action] || '✅ Действие выполняется', '#667eea');
+        }
+        
+        // Переключение табов
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            userData.currentTab = tab;
+            renderTasks();
+        }
+        
+        // Показать доступные задания
+        function showTasks() {
+            if (userData.currentTab !== 'tasks') {
+                userData.currentTab = 'tasks';
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.querySelectorAll('.tab')[1].classList.remove('active');
+                renderTasks();
+            }
+        }
+        
+        // Показать выполненные задания
+        function showCompleted() {
+            if (userData.currentTab !== 'completed') {
+                userData.currentTab = 'completed';
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.querySelectorAll('.tab')[0].classList.remove('active');
+                renderTasks();
+            }
+        }
+        
+        // Обновление статистики
+        function updateStats() {
+            const completed = userData.allTasks?.filter(t => t.completed).length || 0;
+            const available = userData.allTasks?.filter(t => !t.completed).length || 0;
+            
+            document.getElementById('completedTasks').textContent = completed;
+            document.getElementById('availableTasks').textContent = available;
+            document.getElementById('balance').textContent = userData.balance;
+        }
+        
+        // Показать/скрыть загрузку
+        function showLoading(show) {
+            if (!show) return;
+            
+            const container = document.getElementById('tasksContainer');
+            container.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    Загрузка...
+                </div>
+            `;
+        }
+        
+        // Показать сообщение
+        function showMessage(text, bgColor = '#4caf50') {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.style.backgroundColor = bgColor;
+            msg.style.display = 'block';
+            
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 2000);
+        }
+        
+        // Обработка ответов от бота
+        tg.onEvent('message', function(event) {
+            try {
+                const data = JSON.parse(event.data);
+                console.log('Получены данные:', data);
+                
+                // Обновляем баланс
+                if (data.balance !== undefined) {
+                    userData.balance = data.balance;
+                    document.getElementById('balance').textContent = data.balance;
+                }
+                
+                // Обновляем статус админа
+                if (data.isAdmin !== undefined) {
+                    isAdmin = data.isAdmin;
+                    const adminPanel = document.getElementById('adminPanel');
+                    if (isAdmin) {
+                        adminPanel.classList.add('visible');
+                    } else {
+                        adminPanel.classList.remove('visible');
+                    }
+                }
+                
+                // Обновляем задания
+                if (data.tasks) {
+                    userData.allTasks = data.tasks;
+                    renderTasks();
+                    updateStats();
+                }
+                
+                // Обновление после выполнения задания
+                if (data.success !== undefined && data.taskId) {
+                    if (data.success) {
+                        // Находим и обновляем задание
+                        const task = userData.allTasks.find(t => t.id === data.taskId);
+                        if (task) {
+                            task.completed = true;
+                        }
+                        userData.balance = data.newBalance || userData.balance;
+                        
+                        renderTasks();
+                        updateStats();
+                        showMessage(data.message || '✅ Задание выполнено!');
+                    } else {
+                        showMessage(data.message || '❌ Ошибка', '#f44336');
+                    }
+                }
+                
+                // Админ-статистика
+                if (data.totalUsers !== undefined) {
+                    showMessage(`👥 Всего: ${data.totalUsers} | 📋 Заданий: ${data.totalTasks} | 💰 Монет: ${data.totalCoins}`, '#667eea');
+                }
+                
+            } catch (e) {
+                console.log('Обработаны данные:', event.data);
+            }
+        });
+        
+        // Загружаем данные при старте
+        loadAllData();
+        
+        // Обработка ошибок
+        window.onerror = function(msg, url, line) {
+            console.log('Ошибка:', msg, line);
+            showMessage('❌ Произошла ошибка', '#f44336');
+        };
+    </script>
+</body>
+</html>
