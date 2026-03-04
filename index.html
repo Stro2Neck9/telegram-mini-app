@@ -203,6 +203,92 @@
             transform: translateY(-2px);
         }
 
+        /* Реферальный блок */
+        .referral-card {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            color: white;
+            box-shadow: 0 10px 25px rgba(255, 154, 158, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .referral-card::before {
+            content: '👥';
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            font-size: 60px;
+            opacity: 0.2;
+        }
+
+        .referral-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .referral-link {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 14px;
+            word-break: break-all;
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .referral-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .referral-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .referral-stat {
+            flex: 1;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 10px;
+        }
+
+        .referral-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .referral-stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .copy-btn {
+            background: white;
+            color: #ff9a9e;
+            border: none;
+            border-radius: 10px;
+            padding: 5px 15px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+
         /* Статистика */
         .stats-grid {
             display: grid;
@@ -353,6 +439,15 @@
             gap: 3px;
         }
 
+        .task-badge {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background: #f0f0f0;
+            color: #666;
+            margin-left: 8px;
+        }
+
         .task-action {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -364,6 +459,10 @@
             cursor: pointer;
             transition: all 0.3s;
             min-width: 100px;
+        }
+
+        .task-action.special {
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
         }
 
         .task-action:hover:not(:disabled) {
@@ -560,9 +659,9 @@
     <!-- Навигационное меню -->
     <div class="nav-menu">
         <div class="nav-item active" onclick="showSection('tasks')">📋 Задания</div>
+        <div class="nav-item" onclick="showSection('referral')">👥 Друзья</div>
         <div class="nav-item" onclick="showSection('stats')">📊 Статистика</div>
         <div class="nav-item" onclick="showSection('help')">❓ Помощь</div>
-        <div class="nav-item" onclick="showSection('profile')">👤 Профиль</div>
     </div>
 
     <!-- Контент -->
@@ -578,10 +677,6 @@
                 <button class="admin-btn" onclick="adminAction('reset')">💰 Сбросить монеты</button>
                 <button class="admin-btn" onclick="adminAction('add1000')">➕ +1000 монет</button>
                 <button class="admin-btn" onclick="adminAction('stats')">📊 Статистика бота</button>
-                <button class="admin-btn" onclick="adminAction('showtasks')">📋 Все задания</button>
-                <button class="admin-btn" onclick="adminAction('activetasks')">✅ Активные</button>
-                <button class="admin-btn" onclick="adminAction('inactivetasks')">❌ Неактивные</button>
-                <button class="admin-btn" onclick="adminAction('makeadmin')">👑 Назначить админа</button>
             </div>
         </div>
 
@@ -596,6 +691,49 @@
                 <div class="loading">
                     <div class="spinner"></div>
                     <div>Загрузка заданий...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция: Реферальная система -->
+        <div id="referral-section" class="hidden">
+            <div class="referral-card">
+                <div class="referral-title">👥 Пригласи друзей</div>
+                <div class="referral-stats">
+                    <div class="referral-stat">
+                        <div class="referral-stat-value" id="referralCount">0</div>
+                        <div class="referral-stat-label">Приглашено</div>
+                    </div>
+                    <div class="referral-stat">
+                        <div class="referral-stat-value" id="referralEarned">0</div>
+                        <div class="referral-stat-label">Заработано</div>
+                    </div>
+                </div>
+                <div class="referral-link" onclick="copyReferralLink()">
+                    <span id="referralLink">Загрузка...</span>
+                    <span class="copy-btn">Копировать</span>
+                </div>
+                <div style="font-size: 12px; opacity: 0.9;">
+                    🔗 За каждого друга, который начнет играть, ты получишь 100 монет!
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="referralBonus1">100</div>
+                    <div class="stat-label">За друга</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="referralBonus2">50</div>
+                    <div class="stat-label">За запуск</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="referralTotal">0</div>
+                    <div class="stat-label">Всего</div>
+                </div>
+                <div class="stat-card" onclick="refreshData()">
+                    <div class="stat-value">🔄</div>
+                    <div class="stat-label">Обновить</div>
                 </div>
             </div>
         </div>
@@ -652,6 +790,21 @@
                 
                 <div class="help-section">
                     <div class="help-item">
+                        <span class="help-command">🚀 Запуск</span>
+                        <span class="help-desc">+50 монет за первый запуск</span>
+                    </div>
+                    <div class="help-item">
+                        <span class="help-command">👥 Друзья</span>
+                        <span class="help-desc">+100 монет за каждого друга</span>
+                    </div>
+                    <div class="help-item">
+                        <span class="help-command">📋 Задания</span>
+                        <span class="help-desc">Выполняй задания и получай монеты</span>
+                    </div>
+                </div>
+
+                <div class="help-section">
+                    <div class="help-item">
                         <span class="help-command">/start</span>
                         <span class="help-desc">Начать работу с ботом</span>
                     </div>
@@ -664,37 +817,6 @@
                         <span class="help-desc">Узнать свой Telegram ID</span>
                     </div>
                 </div>
-
-                <div class="help-section">
-                    <div class="help-item">
-                        <span class="help-command">/adminhelp</span>
-                        <span class="help-desc">Команды администратора</span>
-                    </div>
-                    <div class="help-item">
-                        <span class="help-command">/adminstats</span>
-                        <span class="help-desc">Статистика бота</span>
-                    </div>
-                    <div class="help-item">
-                        <span class="help-command">/adminclear</span>
-                        <span class="help-desc">Очистить задания</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Секция: Профиль -->
-        <div id="profile-section" class="hidden">
-            <div class="info-card">
-                <div class="info-icon">👤</div>
-                <div class="info-title" id="profileName">Пользователь</div>
-                <div class="info-text">
-                    <div style="margin: 10px 0;">🆔 ID: <span id="profileId">...</span></div>
-                    <div style="margin: 10px 0;">🔗 Username: <span id="profileUsername">...</span></div>
-                    <div style="margin: 10px 0;">📅 Регистрация: <span id="profileDate">...</span></div>
-                    <div style="margin: 10px 0;">💰 Монет: <span id="profileCoins">0</span></div>
-                    <div style="margin: 10px 0;">✅ Выполнено: <span id="profileTasks">0</span></div>
-                    <div style="margin: 10px 0;">👑 Админ: <span id="profileAdmin">Нет</span></div>
-                </div>
             </div>
         </div>
 
@@ -706,7 +828,7 @@
 
     <!-- Футер -->
     <div class="footer">
-        @MyMoney124_bot · Все функции в одном окне
+        @MyMoney124_bot · Приглашай друзей и получай бонусы!
     </div>
 
     <!-- Уведомления -->
@@ -729,8 +851,13 @@
             lastName: user?.last_name,
             balance: 0,
             tasks: [],
+            referralCount: 0,
+            referralEarned: 0,
             joinedDate: new Date().toLocaleDateString()
         };
+
+        // Реферальная ссылка
+        const referralLink = `https://t.me/${tg.initDataUnsafe?.bot?.username || 'MyMoney124_bot'}?start=ref_${user?.id}`;
 
         // Глобальная статистика
         let globalStats = {
@@ -746,6 +873,10 @@
         const tasksListEl = document.getElementById('tasksList');
         const adminPanelEl = document.getElementById('adminPanel');
         const toastEl = document.getElementById('toast');
+        const referralLinkEl = document.getElementById('referralLink');
+        const referralCountEl = document.getElementById('referralCount');
+        const referralEarnedEl = document.getElementById('referralEarned');
+        const referralTotalEl = document.getElementById('referralTotal');
 
         // Статистика
         const statBalance = document.getElementById('statBalance');
@@ -757,50 +888,43 @@
         const totalCompleted = document.getElementById('totalCompleted');
         const totalCoins = document.getElementById('totalCoins');
 
-        // Профиль
-        const profileName = document.getElementById('profileName');
-        const profileId = document.getElementById('profileId');
-        const profileUsername = document.getElementById('profileUsername');
-        const profileDate = document.getElementById('profileDate');
-        const profileCoins = document.getElementById('profileCoins');
-        const profileTasks = document.getElementById('profileTasks');
-        const profileAdmin = document.getElementById('profileAdmin');
-
         // Отображение имени пользователя
         if (user) {
             usernameEl.textContent = user.username ? `@${user.username}` : user.firstName || 'Пользователь';
-            profileId.textContent = user.id;
-            profileUsername.textContent = user.username ? `@${user.username}` : 'нет';
-            profileName.textContent = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Пользователь';
+        }
+
+        // Отображение реферальной ссылки
+        if (referralLinkEl) {
+            referralLinkEl.textContent = referralLink;
+        }
+
+        // Копирование реферальной ссылки
+        function copyReferralLink() {
+            navigator.clipboard.writeText(referralLink).then(() => {
+                showToast('✅ Ссылка скопирована!', 'success');
+            }).catch(() => {
+                showToast('❌ Ошибка копирования', 'error');
+            });
         }
 
         // Переключение секций
         function showSection(section) {
-            // Обновляем активный пункт меню
             document.querySelectorAll('.nav-item').forEach((item, index) => {
                 item.classList.remove('active');
                 if ((section === 'tasks' && index === 0) ||
-                    (section === 'stats' && index === 1) ||
-                    (section === 'help' && index === 2) ||
-                    (section === 'profile' && index === 3)) {
+                    (section === 'referral' && index === 1) ||
+                    (section === 'stats' && index === 2) ||
+                    (section === 'help' && index === 3)) {
                     item.classList.add('active');
                 }
             });
 
-            // Показываем нужную секцию
             document.getElementById('tasks-section').classList.add('hidden');
+            document.getElementById('referral-section').classList.add('hidden');
             document.getElementById('stats-section').classList.add('hidden');
             document.getElementById('help-section').classList.add('hidden');
-            document.getElementById('profile-section').classList.add('hidden');
             
             document.getElementById(`${section}-section`).classList.remove('hidden');
-
-            // Загружаем данные для секции
-            if (section === 'stats') {
-                updateStats();
-            } else if (section === 'profile') {
-                updateProfile();
-            }
         }
 
         // Переключение табов заданий
@@ -819,6 +943,7 @@
         function loadAllData() {
             sendToBot({ action: 'get_user_data', user_id: user?.id });
             sendToBot({ action: 'get_tasks', user_id: user?.id });
+            sendToBot({ action: 'get_referral_stats', user_id: user?.id });
             if (isAdmin) {
                 sendToBot({ action: 'admin_stats', user_id: user?.id });
             }
@@ -841,9 +966,8 @@
         }
 
         // Выполнение задания
-        function completeTask(taskId, reward) {
+        function completeTask(taskId, reward, taskType) {
             const button = event.target;
-            const originalText = button.textContent;
             
             button.disabled = true;
             button.textContent = '⏳';
@@ -852,7 +976,8 @@
                 action: 'complete_task',
                 task_id: taskId,
                 user_id: user?.id,
-                reward: reward
+                reward: reward,
+                task_type: taskType
             });
         }
 
@@ -864,11 +989,7 @@
                 'clear': '🔄 Очистка заданий...',
                 'reset': '💰 Сброс монет...',
                 'add1000': '➕ Добавление монет...',
-                'stats': '📊 Запрос статистики...',
-                'showtasks': '📋 Загрузка заданий...',
-                'activetasks': '✅ Загрузка активных...',
-                'inactivetasks': '❌ Загрузка неактивных...',
-                'makeadmin': '👑 Назначение админа...'
+                'stats': '📊 Запрос статистики...'
             };
             
             showToast(messages[action] || '⏳ Выполняется...', 'info');
@@ -902,19 +1023,35 @@
 
             let html = '';
             filteredTasks.forEach(task => {
+                let actionButton = '';
+                
+                if (task.task_type === 'start') {
+                    actionButton = `<button class="task-action special completed" disabled>✅ Выполнено</button>`;
+                } else if (task.task_type === 'referral') {
+                    actionButton = `<button class="task-action special" onclick="showSection('referral')">👥 Пригласить</button>`;
+                } else {
+                    actionButton = `
+                        <button class="task-action ${task.completed ? 'completed' : ''}" 
+                                ${task.completed ? 'disabled' : ''}
+                                onclick="completeTask(${task.id}, ${task.reward}, '${task.task_type}')">
+                            ${task.completed ? '✓ Готово' : 'Выполнить'}
+                        </button>
+                    `;
+                }
+                
                 html += `
                     <div class="task-item ${task.completed ? 'completed' : ''}">
                         <div class="task-icon">${task.icon || '📌'}</div>
                         <div class="task-info">
-                            <div class="task-title">${escapeHtml(task.title)}</div>
+                            <div class="task-title">
+                                ${escapeHtml(task.title)}
+                                ${task.task_type === 'start' ? '<span class="task-badge">🚀 Бонус</span>' : ''}
+                                ${task.task_type === 'referral' ? '<span class="task-badge">👥 Реферал</span>' : ''}
+                            </div>
                             <div class="task-desc">${escapeHtml(task.description)}</div>
                             <div class="task-reward">💰 +${task.reward}</div>
                         </div>
-                        <button class="task-action ${task.completed ? 'completed' : ''}" 
-                                ${task.completed ? 'disabled' : ''}
-                                onclick="completeTask(${task.id}, ${task.reward})">
-                            ${task.completed ? '✓ Готово' : 'Выполнить'}
-                        </button>
+                        ${actionButton}
                     </div>
                 `;
             });
@@ -930,20 +1067,17 @@
             statBalance.textContent = userData.balance;
             statCompleted.textContent = completed;
             statAvailable.textContent = available;
-            statTotal.textContent = completed + available;
+            statTotal.textContent = userData.tasks?.length || 0;
             
             totalUsers.textContent = globalStats.totalUsers;
             totalTasks.textContent = globalStats.totalTasks;
             totalCompleted.textContent = globalStats.totalCompleted;
             totalCoins.textContent = globalStats.totalCoins;
-        }
 
-        // Обновление профиля
-        function updateProfile() {
-            profileCoins.textContent = userData.balance;
-            profileTasks.textContent = userData.tasks?.filter(t => t.completed).length || 0;
-            profileAdmin.textContent = isAdmin ? 'Да' : 'Нет';
-            profileDate.textContent = userData.joinedDate || new Date().toLocaleDateString();
+            // Реферальная статистика
+            if (referralCountEl) referralCountEl.textContent = userData.referralCount || 0;
+            if (referralEarnedEl) referralEarnedEl.textContent = userData.referralEarned || 0;
+            if (referralTotalEl) referralTotalEl.textContent = (userData.referralEarned || 0) + (userData.balance || 0);
         }
 
         // Показ уведомления
@@ -974,9 +1108,7 @@
                 if (data.balance !== undefined) {
                     userData.balance = data.balance;
                     balanceEl.textContent = data.balance;
-                    if (!document.getElementById('stats-section').classList.contains('hidden')) {
-                        updateStats();
-                    }
+                    updateStats();
                 }
 
                 // Обновление статуса админа
@@ -987,18 +1119,20 @@
                     } else {
                         adminPanelEl.classList.remove('visible');
                     }
-                    if (!document.getElementById('profile-section').classList.contains('hidden')) {
-                        updateProfile();
-                    }
                 }
 
                 // Обновление заданий
                 if (data.tasks) {
                     userData.tasks = data.tasks;
                     renderTasks();
-                    if (!document.getElementById('stats-section').classList.contains('hidden')) {
-                        updateStats();
-                    }
+                    updateStats();
+                }
+
+                // Обновление реферальной статистики
+                if (data.referralCount !== undefined) {
+                    userData.referralCount = data.referralCount;
+                    userData.referralEarned = data.referralEarned || data.referralCount * 100;
+                    updateStats();
                 }
 
                 // Обновление после выполнения задания
@@ -1011,9 +1145,7 @@
                         userData.balance = data.newBalance || userData.balance;
                         balanceEl.textContent = userData.balance;
                         renderTasks();
-                        if (!document.getElementById('stats-section').classList.contains('hidden')) {
-                            updateStats();
-                        }
+                        updateStats();
                         showToast(data.message || '✅ Задание выполнено!', 'success');
                     } else {
                         showToast(data.message || '❌ Ошибка', 'error');
@@ -1028,15 +1160,7 @@
                         totalCompleted: data.totalCompleted,
                         totalCoins: data.totalCoins
                     };
-                    if (!document.getElementById('stats-section').classList.contains('hidden')) {
-                        updateStats();
-                    }
-                    showToast(`👥 ${data.totalUsers} · 📋 ${data.totalTasks} · 💰 ${data.totalCoins}`, 'info');
-                }
-
-                // Информация о пользователе
-                if (data.completedCount !== undefined) {
-                    userData.completedCount = data.completedCount;
+                    updateStats();
                 }
 
             } catch (e) {
