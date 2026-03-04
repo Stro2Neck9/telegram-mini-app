@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Bot - Информация</title>
+    <title>VolkBot - Информация</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -270,8 +270,8 @@
 <body>
     <!-- Шапка -->
     <div class="header">
-        <div class="logo">🤖 Task Bot</div>
-        <div class="username" id="username">Загрузка...</div>
+        <div class="logo">🐺 VolkBot</div>
+        <div class="username" id="username">Гость</div>
     </div>
     
     <!-- Навигация -->
@@ -335,22 +335,22 @@
                 <div class="update-item">
                     <div class="update-date">
                         <span>🔥 Новое</span>
-                        04 марта 2025
+                        05 марта 2025
                     </div>
-                    <div class="update-title">✨ Версия 2.0.0 - Большое обновление</div>
+                    <div class="update-title">✨ Версия 2.0.0 - Информационное окно</div>
                     <ul class="update-changes">
                         <li class="new">✨ Добавлено информационное окно с тремя разделами</li>
                         <li class="new">📋 Раздел "Команды" со всеми командами бота</li>
                         <li class="new">🔄 Раздел "Обновления" с историей изменений</li>
                         <li class="new">💖 Раздел "Поддержка" для связи с автором</li>
-                        <li class="new">🎨 Полностью обновлен дизайн интерфейса</li>
+                        <li class="new">🐺 Новое название: VolkBot</li>
                     </ul>
                 </div>
                 
                 <div class="update-item">
                     <div class="update-date">
                         <span>⚡️ Улучшено</span>
-                        03 марта 2025
+                        04 марта 2025
                     </div>
                     <div class="update-title">⚡️ Версия 1.5.0 - Улучшения</div>
                     <ul class="update-changes">
@@ -403,7 +403,7 @@
     
     <!-- Футер -->
     <div class="footer">
-        @MyMoney124_bot · Информационное окно v2.0
+        @MyMoney124_bot · Информационное окно
     </div>
 
     <script>
@@ -415,10 +415,12 @@
         // Данные пользователя
         const user = tg.initDataUnsafe?.user;
         
-        // Отображение имени пользователя
+        // Отображение имени пользователя (без загрузки)
+        const usernameEl = document.getElementById('username');
         if (user) {
-            const usernameEl = document.getElementById('username');
-            usernameEl.textContent = user.username ? `@${user.username}` : (user.first_name || 'Пользователь');
+            usernameEl.textContent = user.username ? `@${user.username}` : (user.first_name || 'Гость');
+        } else {
+            usernameEl.textContent = 'Гость';
         }
         
         // Переключение разделов
@@ -451,7 +453,7 @@
             tg.openLink(url);
         }
         
-        console.log('✅ Информационное окно загружено');
+        console.log('✅ Информационное окно VolkBot загружено');
     </script>
 </body>
 </html>
