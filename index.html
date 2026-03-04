@@ -1031,4 +1031,21 @@
                     if (!document.getElementById('stats-section').classList.contains('hidden')) {
                         updateStats();
                     }
-                    showToast(`👥 ${data.totalUsers} · 📋 ${data.totalTasks} · 💰 ${data.totalCoins}`,
+                    showToast(`👥 ${data.totalUsers} · 📋 ${data.totalTasks} · 💰 ${data.totalCoins}`, 'info');
+                }
+
+                // Информация о пользователе
+                if (data.completedCount !== undefined) {
+                    userData.completedCount = data.completedCount;
+                }
+
+            } catch (e) {
+                console.error('Ошибка парсинга:', e);
+            }
+        });
+
+        // Загрузка данных при старте
+        loadAllData();
+    </script>
+</body>
+</html>
