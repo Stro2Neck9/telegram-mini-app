@@ -1,299 +1,68 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Bot</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-        
         body {
-            background: var(--tg-theme-bg-color, #f5f7fa);
-            color: var(--tg-theme-text-color, #2c3e50);
-            min-height: 100vh;
-            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f7fa;
             margin: 0;
-        }
-        
-        /* Шапка */
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
+            padding: 30px 20px;
+            border-radius: 20px;
             text-align: center;
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            margin-bottom: 20px;
         }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
         .balance {
             font-size: 48px;
-            font-weight: 700;
+            font-weight: bold;
             margin: 10px 0;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        
-        .balance-label {
-            font-size: 14px;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .username {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-top: 10px;
-        }
-        
-        /* Меню навигации */
-        .nav-menu {
+        .nav {
             display: flex;
-            background: white;
-            padding: 10px;
-            gap: 5px;
-            margin: 20px;
-            border-radius: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            gap: 10px;
+            margin-bottom: 20px;
         }
-        
         .nav-item {
             flex: 1;
-            padding: 12px;
+            padding: 15px;
+            background: white;
+            border-radius: 15px;
             text-align: center;
-            border-radius: 25px;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            color: #95a5a6;
-            font-size: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        
         .nav-item.active {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
-        
-        /* Контент */
-        .content {
-            padding: 20px;
-        }
-        
-        /* Секция заданий */
-        .tasks-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
-        }
-        
         .task-item {
             background: white;
-            border-radius: 18px;
-            padding: 16px;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-            border: 1px solid rgba(0,0,0,0.03);
-            transition: all 0.3s;
         }
-        
-        .task-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
-        }
-        
-        .task-item.completed {
-            opacity: 0.8;
-            background: #f8f9fa;
-        }
-        
-        .task-info {
-            flex: 1;
-        }
-        
-        .task-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #2c3e50;
-        }
-        
-        .task-desc {
-            font-size: 13px;
-            color: #95a5a6;
-            margin-bottom: 6px;
-        }
-        
-        .task-reward {
-            font-size: 14px;
-            font-weight: 600;
-            color: #27ae60;
-        }
-        
-        .task-badge {
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 12px;
-            background: #f0f0f0;
-            color: #666;
-            margin-left: 8px;
-        }
-        
         .task-button {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            border-radius: 25px;
             padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 500;
+            border-radius: 25px;
             cursor: pointer;
-            transition: all 0.3s;
-            min-width: 100px;
         }
-        
-        .task-button.special {
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-        }
-        
-        .task-button:hover:not(:disabled) {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-        
         .task-button.completed {
-            background: #27ae60;
+            background: #4caf50;
         }
-        
-        .task-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        /* Реферальная карточка */
-        .referral-card {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            color: white;
-            text-align: center;
-        }
-        
-        .referral-link {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 15px;
-            padding: 15px;
-            margin: 15px 0;
-            font-size: 12px;
-            word-break: break-all;
-            cursor: pointer;
-        }
-        
-        .referral-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 15px;
-        }
-        
-        .referral-stat {
-            text-align: center;
-        }
-        
-        .referral-stat-value {
-            font-size: 24px;
-            font-weight: 700;
-        }
-        
-        .referral-stat-label {
-            font-size: 12px;
-            opacity: 0.9;
-        }
-        
-        .copy-btn {
-            background: white;
-            color: #ff9a9e;
-            border: none;
-            border-radius: 10px;
-            padding: 8px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        
-        /* Статистика */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-        }
-        
-        .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #95a5a6;
-        }
-        
-        /* Помощь */
-        .help-section {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-        }
-        
-        .help-item {
-            padding: 15px 0;
-            border-bottom: 1px solid #ecf0f1;
-        }
-        
-        .help-item:last-child {
-            border-bottom: none;
-        }
-        
-        .help-command {
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-        
-        .help-desc {
-            color: #7f8c8d;
-            font-size: 14px;
-        }
-        
-        /* Кнопка обновления */
         .refresh-btn {
             width: 100%;
             padding: 15px;
@@ -304,502 +73,157 @@
             margin-top: 20px;
             cursor: pointer;
             font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
         }
-        
-        .refresh-btn:hover {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-color: transparent;
-            transform: translateY(-2px);
-        }
-        
-        /* Загрузка */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Уведомления */
         .toast {
             position: fixed;
             bottom: 20px;
             left: 20px;
             right: 20px;
-            background: #2c3e50;
+            background: #333;
             color: white;
             padding: 15px;
             border-radius: 10px;
             text-align: center;
             display: none;
-            z-index: 1000;
-            animation: slideUp 0.3s ease;
         }
-        
-        .toast.success { background: #27ae60; }
-        .toast.error { background: #e74c3c; }
-        .toast.info { background: #3498db; }
-        
-        @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        /* Скрытые секции */
-        .hidden {
-            display: none;
-        }
-        
-        /* Футер */
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            color: #95a5a6;
-            font-size: 12px;
-        }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <!-- Шапка -->
     <div class="header">
-        <div class="logo">✨ Task Bot</div>
-        <div class="balance-label">ВАШ БАЛАНС</div>
+        <h1>Task Bot</h1>
         <div class="balance" id="balance">0</div>
-        <div class="username" id="username">Загрузка...</div>
+        <div id="username">Загрузка...</div>
     </div>
-    
-    <!-- Навигационное меню -->
-    <div class="nav-menu">
+
+    <div class="nav">
         <div class="nav-item active" onclick="showSection('tasks')">📋 Задания</div>
-        <div class="nav-item" onclick="showSection('friends')">👥 Друзья</div>
         <div class="nav-item" onclick="showSection('stats')">📊 Статистика</div>
-        <div class="nav-item" onclick="showSection('help')">❓ Помощь</div>
     </div>
-    
-    <!-- Контент -->
-    <div class="content">
-        <!-- Секция заданий -->
-        <div id="tasks-section">
-            <div class="tasks-list" id="tasksList">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    Загрузка заданий...
-                </div>
-            </div>
-        </div>
-        
-        <!-- Секция друзей (реферальная система) -->
-        <div id="friends-section" class="hidden">
-            <div class="referral-card">
-                <h2>👥 Пригласи друзей</h2>
-                <p>За каждого друга, который начнет играть, ты получишь 100 монет!</p>
-                <div class="referral-link" id="referralLink" onclick="copyReferralLink()">
-                    Загрузка ссылки...
-                </div>
-                <button class="copy-btn" onclick="copyReferralLink()">📋 Копировать ссылку</button>
-                <div class="referral-stats">
-                    <div class="referral-stat">
-                        <div class="referral-stat-value" id="referralCount">0</div>
-                        <div class="referral-stat-label">Приглашено</div>
-                    </div>
-                    <div class="referral-stat">
-                        <div class="referral-stat-value" id="referralEarned">0</div>
-                        <div class="referral-stat-label">Заработано</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Секция статистики -->
-        <div id="stats-section" class="hidden">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="statBalance">0</div>
-                    <div class="stat-label">Монет</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="statCompleted">0</div>
-                    <div class="stat-label">Выполнено</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="statAvailable">0</div>
-                    <div class="stat-label">Доступно</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="statTotal">0</div>
-                    <div class="stat-label">Всего</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Секция помощи -->
-        <div id="help-section" class="hidden">
-            <div class="help-section">
-                <div class="help-item">
-                    <div class="help-command">🚀 Запуск бота</div>
-                    <div class="help-desc">+50 монет за первый запуск</div>
-                </div>
-                <div class="help-item">
-                    <div class="help-command">👥 Приглашение друга</div>
-                    <div class="help-desc">+100 монет за каждого друга</div>
-                </div>
-                <div class="help-item">
-                    <div class="help-command">📋 Выполнение заданий</div>
-                    <div class="help-desc">Получай монеты за задания</div>
-                </div>
-                <div class="help-item">
-                    <div class="help-command">/balance</div>
-                    <div class="help-desc">Проверить баланс</div>
-                </div>
-                <div class="help-item">
-                    <div class="help-command">/myid</div>
-                    <div class="help-desc">Узнать свой ID</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Кнопка обновления -->
-        <button class="refresh-btn" onclick="refreshData()">🔄 Обновить все данные</button>
+
+    <div id="tasks-section">
+        <div id="tasksList"></div>
     </div>
-    
-    <!-- Футер -->
-    <div class="footer">
-        @MyMoney124_bot · Реальное время
+
+    <div id="stats-section" class="hidden">
+        <div style="background: white; padding: 20px; border-radius: 15px;">
+            <p>💰 Баланс: <span id="statBalance">0</span></p>
+            <p>✅ Выполнено: <span id="statCompleted">0</span></p>
+            <p>📋 Доступно: <span id="statAvailable">0</span></p>
+        </div>
     </div>
-    
-    <!-- Уведомления -->
+
+    <button class="refresh-btn" onclick="refreshData()">🔄 Обновить</button>
     <div class="toast" id="toast"></div>
 
     <script>
-        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
-        
-        console.log('✅ WebApp инициализирован');
-        
-        // Данные пользователя
+
         const user = tg.initDataUnsafe?.user;
-        console.log('👤 Пользователь:', user);
-        
-        // Отображение имени пользователя
-        if (user) {
-            document.getElementById('username').textContent = user.username ? `@${user.username}` : (user.first_name || 'Пользователь');
-        }
-        
-        // Состояние приложения
+        let userData = { balance: 0, tasks: [] };
         let currentSection = 'tasks';
-        let userData = {
-            balance: 0,
-            tasks: [],
-            referralCount: 0,
-            referralEarned: 0
-        };
-        
-        // ==================== ОТПРАВКА ДАННЫХ БОТУ ====================
-        function sendToBot(action, additionalData = {}) {
-            const data = {
-                action: action,
-                user_id: user?.id,
-                ...additionalData
-            };
-            
-            const jsonData = JSON.stringify(data);
-            console.log('📤 Отправка боту:', jsonData);
-            tg.sendData(jsonData);
+
+        function sendToBot(action, data = {}) {
+            const payload = { action, user_id: user?.id, ...data };
+            console.log('📤 Отправка:', payload);
+            tg.sendData(JSON.stringify(payload));
         }
-        
-        // ==================== ЗАГРУЗКА ДАННЫХ ====================
-        function loadUserData() {
-            console.log('📥 Загрузка данных пользователя...');
-            sendToBot('get_user_data');
-        }
-        
-        function loadTasks() {
-            console.log('📥 Загрузка заданий...');
-            sendToBot('get_tasks');
-        }
-        
-        function loadReferralStats() {
-            console.log('📥 Загрузка реферальной статистики...');
-            sendToBot('get_referral_stats');
-        }
-        
-        function refreshData() {
-            showToast('🔄 Обновление данных...', 'info');
-            loadUserData();
-            loadTasks();
-            loadReferralStats();
-        }
-        
-        // ==================== ПЕРЕКЛЮЧЕНИЕ СЕКЦИЙ ====================
+
         function showSection(section) {
             currentSection = section;
-            
-            // Обновляем активный пункт меню
-            document.querySelectorAll('.nav-item').forEach((item, index) => {
-                item.classList.remove('active');
-                if ((section === 'tasks' && index === 0) ||
-                    (section === 'friends' && index === 1) ||
-                    (section === 'stats' && index === 2) ||
-                    (section === 'help' && index === 3)) {
-                    item.classList.add('active');
-                }
+            document.querySelectorAll('.nav-item').forEach((el, i) => {
+                el.classList.toggle('active', 
+                    (section === 'tasks' && i === 0) || 
+                    (section === 'stats' && i === 1));
             });
-            
-            // Показываем нужную секцию
-            document.getElementById('tasks-section').classList.add('hidden');
-            document.getElementById('friends-section').classList.add('hidden');
-            document.getElementById('stats-section').classList.add('hidden');
-            document.getElementById('help-section').classList.add('hidden');
-            
-            document.getElementById(`${section}-section`).classList.remove('hidden');
-            
-            // Загружаем данные для секции
-            if (section === 'friends') {
-                loadReferralStats();
-            } else if (section === 'stats') {
-                updateStatsDisplay();
-            }
+            document.getElementById('tasks-section').classList.toggle('hidden', section !== 'tasks');
+            document.getElementById('stats-section').classList.toggle('hidden', section !== 'stats');
+            if (section === 'stats') updateStats();
         }
-        
-        // ==================== ОТРИСОВКА ЗАДАНИЙ ====================
-        function renderTasks() {
-            const list = document.getElementById('tasksList');
-            
-            if (!userData.tasks || userData.tasks.length === 0) {
-                list.innerHTML = '<div class="loading">📭 Нет заданий</div>';
-                return;
-            }
-            
-            let html = '';
-            userData.tasks.forEach(task => {
-                let buttonClass = 'task-button';
-                let buttonText = 'Выполнить';
-                let disabled = '';
-                
-                if (task.completed) {
-                    buttonClass += ' completed';
-                    buttonText = '✓ Готово';
-                    disabled = 'disabled';
-                } else if (task.task_type === 'start') {
-                    buttonClass += ' special';
-                } else if (task.task_type === 'referral') {
-                    buttonClass += ' special';
-                }
-                
-                html += `
-                    <div class="task-item ${task.completed ? 'completed' : ''}">
-                        <div class="task-info">
-                            <div class="task-title">
-                                ${escapeHtml(task.title)}
-                                ${task.task_type === 'start' ? '<span class="task-badge">🚀 Бонус</span>' : ''}
-                                ${task.task_type === 'referral' ? '<span class="task-badge">👥 Реферал</span>' : ''}
-                            </div>
-                            <div class="task-desc">${escapeHtml(task.description || '')}</div>
-                            <div class="task-reward">💰 +${task.reward}</div>
-                        </div>
-                        <button class="${buttonClass}" 
-                                ${disabled}
-                                onclick="completeTask(${task.id}, ${task.reward}, '${task.task_type}')">
-                            ${buttonText}
-                        </button>
-                    </div>
-                `;
-            });
-            
-            list.innerHTML = html;
+
+        function refreshData() {
+            showToast('🔄 Обновление...');
+            sendToBot('get_user_data');
+            sendToBot('get_tasks');
         }
-        
-        // ==================== ВЫПОЛНЕНИЕ ЗАДАНИЯ ====================
-        function completeTask(taskId, reward, taskType) {
-            console.log(`🎯 Выполнение задания ${taskId}...`);
-            
-            // Для реферальных заданий открываем секцию друзей
-            if (taskType === 'referral') {
-                showSection('friends');
-                return;
-            }
-            
-            const button = event.target;
-            const originalText = button.textContent;
-            
-            button.disabled = true;
-            button.textContent = '⏳';
-            
-            sendToBot('complete_task', {
-                task_id: taskId,
-                reward: reward,
-                task_type: taskType
-            });
+
+        function completeTask(taskId) {
+            sendToBot('complete_task', { task_id: taskId });
         }
-        
-        // ==================== РЕФЕРАЛЬНАЯ СИСТЕМА ====================
-        function copyReferralLink() {
-            const link = document.getElementById('referralLink').textContent;
-            if (link && link !== 'Загрузка ссылки...') {
-                navigator.clipboard.writeText(link).then(() => {
-                    showToast('✅ Ссылка скопирована!', 'success');
-                });
-            }
-        }
-        
-        // ==================== ОБНОВЛЕНИЕ СТАТИСТИКИ ====================
-        function updateStatsDisplay() {
+
+        function updateStats() {
             const completed = userData.tasks?.filter(t => t.completed).length || 0;
             const available = userData.tasks?.filter(t => !t.completed).length || 0;
-            
             document.getElementById('statBalance').textContent = userData.balance;
             document.getElementById('statCompleted').textContent = completed;
             document.getElementById('statAvailable').textContent = available;
-            document.getElementById('statTotal').textContent = userData.tasks?.length || 0;
         }
-        
-        // ==================== УВЕДОМЛЕНИЯ ====================
-        function showToast(text, type = 'success') {
+
+        function renderTasks() {
+            const list = document.getElementById('tasksList');
+            if (!userData.tasks?.length) {
+                list.innerHTML = '<div style="text-align:center;padding:40px;">Нет заданий</div>';
+                return;
+            }
+            list.innerHTML = userData.tasks.map(task => `
+                <div class="task-item">
+                    <div>
+                        <strong>${task.title}</strong><br>
+                        <span style="color:#4caf50;">+${task.reward} монет</span>
+                    </div>
+                    <button class="task-button ${task.completed ? 'completed' : ''}" 
+                            ${task.completed ? 'disabled' : ''}
+                            onclick="completeTask(${task.id})">
+                        ${task.completed ? '✓' : 'Выполнить'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function showToast(text) {
             const toast = document.getElementById('toast');
             toast.textContent = text;
-            toast.className = `toast ${type}`;
             toast.style.display = 'block';
-            
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 2000);
+            setTimeout(() => toast.style.display = 'none', 2000);
         }
-        
-        // ==================== ЗАЩИТА ОТ XSS ====================
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // ==================== ОБРАБОТКА ОТВЕТОВ ОТ БОТА ====================
+
         tg.onEvent('message', function(event) {
+            console.log('📥 Получено:', event);
             try {
-                console.log('📥 Получен ответ от бота:', event);
-                
-                // Парсим данные
-                let data;
-                if (typeof event === 'string') {
-                    try {
-                        data = JSON.parse(event);
-                    } catch {
-                        data = { text: event };
-                    }
-                } else if (event.data) {
-                    try {
-                        data = JSON.parse(event.data);
-                    } catch {
-                        data = { text: event.data };
-                    }
-                } else {
-                    data = event;
-                }
-                
-                console.log('📊 Обработанные данные:', data);
-                
-                // Обновление баланса
+                const data = JSON.parse(event.data);
                 if (data.balance !== undefined) {
                     userData.balance = data.balance;
                     document.getElementById('balance').textContent = data.balance;
                 }
-                
-                // Обновление статуса админа (для будущего использования)
-                if (data.isAdmin !== undefined) {
-                    console.log('👑 Админ:', data.isAdmin);
-                }
-                
-                // Обновление заданий
                 if (data.tasks) {
                     userData.tasks = data.tasks;
                     renderTasks();
-                    updateStatsDisplay();
-                    console.log(`📋 Загружено ${data.tasks.length} заданий`);
+                    updateStats();
                 }
-                
-                // Реферальная статистика
-                if (data.referralCount !== undefined) {
-                    userData.referralCount = data.referralCount;
-                    userData.referralEarned = data.referralEarned || data.referralCount * 100;
-                    document.getElementById('referralCount').textContent = data.referralCount;
-                    document.getElementById('referralEarned').textContent = userData.referralEarned;
+                if (data.success !== undefined) {
+                    showToast(data.message || (data.success ? '✅ Готово!' : '❌ Ошибка'));
+                    if (data.success) refreshData();
                 }
-                
-                if (data.referralLink) {
-                    document.getElementById('referralLink').textContent = data.referralLink;
-                }
-                
-                // Результат выполнения задания
-                if (data.success !== undefined && data.taskId) {
-                    if (data.success) {
-                        showToast('✅ Задание выполнено!', 'success');
-                        refreshData(); // Обновляем все данные
-                    } else {
-                        showToast('❌ Задание уже выполнено', 'error');
-                        // Возвращаем кнопку в исходное состояние
-                        const buttons = document.querySelectorAll('.task-button');
-                        buttons.forEach(btn => {
-                            if (btn.textContent === '⏳') {
-                                btn.disabled = false;
-                                btn.textContent = 'Выполнить';
-                            }
-                        });
-                    }
-                }
-                
-                // Тестовое соединение
                 if (data.status === 'connected') {
-                    console.log('✅ Связь с ботом установлена');
-                    showToast('✅ Связь с ботом установлена', 'success');
+                    showToast('✅ Связь работает!');
                 }
-                
             } catch (e) {
-                console.error('❌ Ошибка обработки:', e);
+                console.log('Обработано:', event);
             }
         });
-        
-        // ==================== АВТОМАТИЧЕСКАЯ СИНХРОНИЗАЦИЯ ====================
-        setInterval(() => {
-            console.log('🔄 Автосинхронизация...');
-            sendToBot('sync');
-        }, 10000); // Каждые 10 секунд
-        
-        // ==================== ТЕСТОВОЕ СОЕДИНЕНИЕ ====================
+
+        if (user) {
+            document.getElementById('username').textContent = user.username ? `@${user.username}` : user.first_name || 'Пользователь';
+        }
+
         setTimeout(() => {
-            console.log('🔍 Проверка соединения с ботом...');
             sendToBot('test_connection');
-        }, 1000);
-        
-        // ==================== ЗАГРУЗКА ПРИ СТАРТЕ ====================
-        setTimeout(() => {
             refreshData();
-        }, 1500);
-        
-        // ==================== ОБРАБОТКА ОШИБОК ====================
-        window.onerror = function(msg, url, line) {
-            console.error('❌ Ошибка:', msg, line);
-            showToast('⚠️ Произошла ошибка', 'error');
-        };
+        }, 1000);
+
+        setInterval(() => sendToBot('sync'), 10000);
     </script>
 </body>
 </html>
